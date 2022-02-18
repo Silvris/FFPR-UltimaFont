@@ -11,13 +11,13 @@ System fonts will be loaded by default, while non-system fonts must be loaded in
 4. Optional: in order to change fonts while the game is running, [sinai-dev's BepInExConfigManager](https://github.com/sinai-dev/BepInExConfigManager) will need to be installed
 
 # Font Indices
-Font1 - The main font used by the game for menus and UI
-Font2 - Unknown
-Font3 - The font used for the save select information (Time, Character Name, Location, etc)
-Font4 - Unknown
-Font5 - The font used for all numbers and strings related to numerical data
-Font6 - The font used for the keyboard control help
-Font7 - Unknown
+* Font1 - The main font used by the game for menus and UI
+* Font2 - Unknown
+* Font3 - The font used for the save select information (Time, Character Name, Location, etc)
+* Font4 - Unknown
+* Font5 - The font used for all numbers and strings related to numerical data
+* Font6 - The font used for the keyboard control help
+* Font7 - Unknown
 
 # Credits:
 * The BepInEx Official Discord Server - for answering all of my dumb Unity questions
