@@ -23,6 +23,7 @@ namespace FFPR_UltimaFont
         public static Font[] DefaultFonts { get; set; }
         private bool _IsInitialized = false;
         public static Dictionary<string,Font> LoadedFonts { get; set; }
+        public static List<string> userFonts { get; set; }
         private Boolean _isDisabled;
         private static string[] FontPaths =
         {
@@ -48,9 +49,8 @@ namespace FFPR_UltimaFont
                 Log = BepInEx.Logging.Logger.CreateLogSource("FFPR_UltimaFont");
                 Instance = this;
                 LoadedFonts = new Dictionary<string, Font>();
-                List<string> userFonts = GetFontList();
+                userFonts = new List<string>();
                 DefaultFonts = new Font[7];
-                Config = new Configuration(EntryPoint.Instance.Config,userFonts);
                 Log.LogMessage($"[{nameof(ModComponent)}].{nameof(Awake)}: Processed successfully.");
             }
             catch (Exception ex)
@@ -83,7 +83,11 @@ namespace FFPR_UltimaFont
                     }
                     else
                     {
+                        List<string> defaultFonts = userFonts;
+                        userFonts = GetFontList();
+                        userFonts.AddRange(defaultFonts);
                         RefreshFonts();
+                        Config = new Configuration(EntryPoint.Instance.Config, userFonts);
                         _IsInitialized = true;
                     }
 
@@ -130,6 +134,12 @@ namespace FFPR_UltimaFont
                                 case FontType.Font07:
                                     DefaultFonts[6] = fp.FontInstance;
                                     break;
+                            }
+                            if (!LoadedFonts.ContainsKey(fp.FontName))
+                            {
+                                Log.LogInfo($"Adding default font {fp.FontName}");
+                                LoadedFonts.Add(fp.FontName, fp.FontInstance);
+                                userFonts.Add(fp.FontName);
                             }
                         }
                     }
@@ -179,7 +189,7 @@ namespace FFPR_UltimaFont
                             {
                                 fp.FontInstance = DefaultFonts[type];
                             }
-                            if (Config.Fonts[type] == "Random")
+                            else if (Config.Fonts[type] == "Random")
                             {
                                 fp.FontInstance = LoadedFonts[LoadedFonts.Keys.ToList()[UnityEngine.Random.Range(0, LoadedFonts.Count - 1)]];
                             }
