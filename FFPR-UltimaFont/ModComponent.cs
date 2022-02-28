@@ -24,6 +24,7 @@ namespace FFPR_UltimaFont
         private bool _IsInitialized = false;
         public static Dictionary<string,Font> LoadedFonts { get; set; }
         public static List<string> userFonts { get; set; }
+        public static Font fallbackArial { get; set; }
         private Boolean _isDisabled;
         private static string[] FontPaths =
         {
@@ -86,8 +87,8 @@ namespace FFPR_UltimaFont
                         List<string> defaultFonts = userFonts;
                         userFonts = GetFontList();
                         userFonts.AddRange(defaultFonts);
-                        RefreshFonts();
                         Config = new Configuration(EntryPoint.Instance.Config, userFonts);
+                        RefreshFonts();
                         _IsInitialized = true;
                     }
 
@@ -134,10 +135,13 @@ namespace FFPR_UltimaFont
                                 case FontType.Font07:
                                     DefaultFonts[6] = fp.FontInstance;
                                     break;
+                                case FontType.Default:
+                                    fallbackArial = fp.FontInstance;
+                                    break;
                             }
                             if (!LoadedFonts.ContainsKey(fp.FontName))
                             {
-                                Log.LogInfo($"Adding default font {fp.FontName}");
+                                //Log.LogInfo($"Adding default font {fp.FontName}");
                                 LoadedFonts.Add(fp.FontName, fp.FontInstance);
                                 userFonts.Add(fp.FontName);
                             }
@@ -185,9 +189,19 @@ namespace FFPR_UltimaFont
                     {
                         try
                         {
+                            Log.LogInfo(Config.Fonts[type]);
                             if (Config.Fonts[type] == "Default")
                             {
-                                fp.FontInstance = DefaultFonts[type];
+                                //Log.LogInfo(DefaultFonts[type]);
+                                if(DefaultFonts[type] != null)
+                                {
+                                    fp.FontInstance = DefaultFonts[type];
+                                }
+                                else
+                                {
+                                    fp.FontInstance = fallbackArial;
+                                }
+                                
                             }
                             else if (Config.Fonts[type] == "Random")
                             {
